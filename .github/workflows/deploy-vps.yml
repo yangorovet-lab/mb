@@ -13,20 +13,30 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_HOST: ${{ secrets.VPS_HOST || vars.VPS_HOST }}
     steps:
       - name: Проверить, настроены ли секреты
         id: check
         run: |
-          if [ -z "$VPS_HOST" ]; then echo "skip=true" >> "$GITHUB_OUTPUT"; echo "VPS_HOST не задан — пропускаем"; else echo "skip=false" >> "$GITHUB_OUTPUT"; fi
+          if [ -z "$VPS_HOST" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::warning::VPS_HOST не задан. Добавь его в Settings → Secrets and variables → Actions (вкладка Secrets, раздел Repository secrets) или как Variable."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "VPS_HOST задан, длина ${#VPS_HOST}"
+          fi
+          if [ -z "${{ secrets.VPS_SSH_KEY }}" ]; then echo "::warning::VPS_SSH_KEY пуст"; else echo "VPS_SSH_KEY задан"; fi
+          if [ -z "${{ secrets.VPS_USER || vars.VPS_USER }}" ]; then echo "::warning::VPS_USER пуст, будет root"; fi
       - name: Обновить сервер по SSH
         if: steps.check.outputs.skip == 'false'
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
+          host: ${{ secrets.VPS_HOST || vars.VPS_HOST }}
+          username: ${{ secrets.VPS_USER || vars.VPS_USER || 'root' }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          port: ${{ secrets.VPS_PORT || 22 }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT || vars.VPS_PORT || 22 }}
+          command_timeout: 20m
           script: |
             set -e
             BRANCH="${{ github.ref_name }}"
