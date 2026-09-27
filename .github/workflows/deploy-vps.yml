@@ -15,13 +15,6 @@ jobs:
     env:
       VPS_HOST: ${{ secrets.VPS_HOST || vars.VPS_HOST }}
     steps:
-      - name: Какие секреты и переменные видит workflow (только имена)
-        env:
-          SECRET_KEYS: ${{ toJSON(secrets) }}
-          VAR_KEYS: ${{ toJSON(vars) }}
-        run: |
-          echo "secrets: $(echo "$SECRET_KEYS" | jq -r 'keys | join(", ")')"
-          echo "vars: $(echo "$VAR_KEYS" | jq -r 'keys | join(", ")')"
       - name: Проверить, настроены ли секреты
         id: check
         run: |
