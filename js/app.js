@@ -560,6 +560,8 @@
     stopTimer();
     game.viewOwn = false;
     $('#battle-boards').classList.remove('view-own');
+    $('#battle-boards').classList.remove('blur');
+    $('#pass-overlay').classList.add('hidden');
     const modeName = game.kind === 'daily' ? 'Вызов дня · ' + formatDateRu(game.dateKey) : game.kind === 'duel' ? 'Дуэль' : game.kind === 'online' ? `Онлайн · комната ${game.room}` : `${MODES[game.mode].name} · ${DIFFICULTY[game.difficulty].name}`;
     $('#battle-mode').textContent = modeName;
     $('#abilities').classList.toggle('hidden', game.mode !== 'arsenal');
@@ -914,10 +916,12 @@
     if (game.kind === 'daily') { renderBattle(); saveGame(); setStatus('Продолжай — здесь противник не отвечает.'); return; }
     if (game.kind === 'online') { game.turn = 1; renderBattle(); setStatus(`Ход соперника: ${game.opp}`); online.syncTimer(); return; }
     if (game.kind === 'duel') {
+      busy = true; // никто не стреляет, пока устройство не передано
       game.turn = 1 - game.turn;
       saveGame();
       renderBattle();
       await sleep(900);
+      if (!game || game.over) { busy = false; return; }
       showPass(game.turn);
       return;
     }
@@ -1020,6 +1024,7 @@
 
   /* ---------- Дуэль: передача устройства ---------- */
   function showPass(turn) {
+    busy = true;
     const ov = $('#pass-overlay');
     ov.classList.remove('hidden');
     $('#pass-title').textContent = 'Передай устройство';
@@ -1031,6 +1036,7 @@
     sfx.tap();
     $('#pass-overlay').classList.add('hidden');
     $('#battle-boards').classList.remove('blur');
+    busy = false;
     game.viewOwn = false;
     $('#battle-boards').classList.remove('view-own');
     setStatus(`Игрок ${game.turn + 1}, выбери клетку`);
@@ -1798,5 +1804,5 @@
   init();
 
   // для отладки и тестов
-  global.BS.app = { get game() { return game; }, showScreen, startSoloGame, startDaily, startPlacement, renderHome };
+  global.BS.app = { get game() { return game; }, get busy() { return busy; }, showScreen, startSoloGame, startDaily, startPlacement, renderHome };
 })(window);
