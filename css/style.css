@@ -207,6 +207,32 @@ b { font-weight: 800; }
 .home-nav button:active { transform: scale(0.96); }
 .version { text-align: center; font-size: 11px; }
 
+/* ---------- Онлайн ---------- */
+.card.action.wide { flex-direction: row; align-items: center; gap: 14px; min-height: 0; padding: 14px 16px; border-color: rgba(var(--accent-rgb), 0.35); background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.12), var(--surface)); }
+.card.action.wide .act-icon { margin: 0; font-size: 28px; }
+.card.action.wide .act-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.card.action.wide .chev { font-size: 26px; color: var(--muted); }
+.online-status { font-size: 14px; color: var(--muted); text-align: center; line-height: 1.4; padding: 0 6px; min-height: 40px; }
+.online-status.good { color: var(--good); }
+.online-status.bad { color: var(--hit); }
+.online-status.busy { color: var(--accent); }
+.room-card .card-title { margin-bottom: 6px; }
+.room-code-box { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
+.room-code { text-align: center; font-size: 40px; letter-spacing: 0.3em; padding: 14px 0 14px 0.3em; border-radius: 14px; background: rgba(0, 0, 0, 0.3); border: 1px dashed rgba(var(--accent-rgb), 0.6); color: var(--accent); text-shadow: 0 0 20px rgba(var(--accent-rgb), 0.6); }
+.room-code-box .input { margin-top: 0; font-size: 12px; color: var(--muted); }
+.room-actions { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; }
+.code-input { text-align: center; font-size: 26px; letter-spacing: 0.25em; text-transform: uppercase; }
+.online-note { text-align: center; padding: 0 8px; }
+.waiting { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.waiting .modal-actions { justify-content: center; width: 100%; }
+.spinner { width: 44px; height: 44px; border-radius: 50%; border: 4px solid rgba(var(--accent-rgb), 0.2); border-top-color: var(--accent); animation: spin 0.9s linear infinite; margin-bottom: 6px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.reactions { display: flex; justify-content: center; gap: 6px; }
+.reactions button { width: 40px; height: 36px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); font-size: 18px; transition: transform 0.12s; }
+.reactions button:active { transform: scale(0.9); }
+.float.emoji { font-size: 54px; text-transform: none; letter-spacing: 0; }
+.own-slot .float.emoji { font-size: 30px; }
+
 /* ---------- Режимы ---------- */
 .modes { display: flex; flex-direction: column; gap: 10px; }
 .mode-card {

@@ -45,6 +45,8 @@
     { id: 'login_7', name: 'Неделя на вахте', desc: 'Заходить в игру 7 дней подряд', icon: '🗓️', xp: 300 },
     { id: 'comeback', name: 'Камбэк', desc: 'Победить, когда у тебя оставался один корабль', icon: '🫀', xp: 200 },
     { id: 'duel_10', name: 'Дуэлянт', desc: 'Сыграть 10 дуэлей на одном устройстве', icon: '🤝', xp: 150 },
+    { id: 'online_win', name: 'Морской волк', desc: 'Выиграть онлайн-партию у друга', icon: '🌐', xp: 200 },
+    { id: 'online_10', name: 'Флотоводец', desc: 'Сыграть 10 онлайн-партий', icon: '🛰️', xp: 300 },
     { id: 'ships_100', name: 'Сотня на дне', desc: 'Потопить 100 кораблей', icon: '🪦', xp: 300 },
   ];
 
@@ -63,6 +65,7 @@
     { id: 'daily', text: 'Пройти ежедневный вызов', goal: 1, stat: 'dailyDone', xp: 90 },
     { id: 'accuracy', text: 'Победить с точностью 50%+', goal: 1, stat: 'accurateWins', xp: 100 },
     { id: 'games3', text: 'Сыграть 3 партии', goal: 3, stat: 'games', xp: 80 },
+    { id: 'online', text: 'Сыграть онлайн с другом', goal: 1, stat: 'onlineGames', xp: 120 },
   ];
 
   function xpForLevel(level) {
@@ -246,6 +249,11 @@
     if (summary.mode === 'blitz') bumpMission('blitzGames', 1, events);
     if (summary.mode === 'arsenal') bumpMission('arsenalGames', 1, events);
     if (summary.mode === 'salvo') bumpMission('salvoGames', 1, events);
+    if (summary.mode === 'online') {
+      s.onlineGames = (s.onlineGames || 0) + 1;
+      bumpMission('onlineGames', 1, events);
+      if (s.onlineGames >= 10) unlock('online_10', events);
+    }
     if ((summary.bestCombo || 0) >= 3) bumpMission('combo3', 1, events);
     if ((summary.bestCombo || 0) >= 4) unlock('combo_4', events);
 
@@ -278,6 +286,7 @@
       if (summary.mode === 'blitz') unlock('blitz_win', events);
       if (summary.mode === 'arsenal') unlock('arsenal_win', events);
       if (summary.mode === 'salvo') unlock('salvo_win', events);
+      if (summary.mode === 'online') unlock('online_win', events);
       if (summary.aliveAtEnd === 1) unlock('comeback', events);
     } else {
       s.losses++;

@@ -1,8 +1,8 @@
 /* Сервис-воркер: кэш оболочки приложения для офлайн-игры */
-const CACHE = 'battleship-v1';
+const CACHE = 'battleship-v2';
 const ASSETS = [
   './', './index.html', './css/style.css',
-  './js/util.js', './js/engine.js', './js/ai.js', './js/progress.js', './js/audio.js', './js/app.js',
+  './js/util.js', './js/engine.js', './js/ai.js', './js/progress.js', './js/audio.js', './js/net.js', './js/vendor/peerjs.min.js', './js/app.js',
   './manifest.webmanifest', './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png',
 ];
 

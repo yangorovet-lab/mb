@@ -47,6 +47,12 @@
 
       <button class="btn primary big" id="btn-play"><span>Играть</span><small>против компьютера</small></button>
 
+      <button class="card action wide" id="btn-online">
+        <div class="act-icon">🌐</div>
+        <div class="act-text"><b>Онлайн с другом</b><small>Создай комнату, отправь код — и в бой с любого устройства</small></div>
+        <span class="chev">›</span>
+      </button>
+
       <div class="grid2">
         <button class="card action" id="btn-daily">
           <div class="act-icon">📅</div>
@@ -136,6 +142,9 @@
         <div class="battle-bottom">
           <div class="status-line" id="status-line">Выбери клетку на поле противника</div>
           <div class="abilities hidden" id="abilities"></div>
+          <div class="reactions hidden" id="reactions">
+            <button data-e="👋">👋</button><button data-e="😎">😎</button><button data-e="😱">😱</button><button data-e="🔥">🔥</button><button data-e="😂">😂</button>
+          </div>
           <div class="fire-row">
             <div class="combo mono" id="combo"></div>
             <button class="btn fire" id="btn-fire" disabled>Огонь</button>
@@ -174,6 +183,35 @@
         <button class="btn ghost big" id="btn-share">Поделиться</button>
         <button class="btn ghost big" id="btn-home">В меню</button>
       </div>
+    </section>
+
+    <!-- ОНЛАЙН -->
+    <section class="screen" id="screen-online">
+      <header class="top"><button class="icon-btn back" data-back>‹</button><h2>Онлайн с другом</h2><span></span></header>
+      <p class="online-status" id="online-status">Создай комнату и отправь другу код или ссылку. Или введи код друга.</p>
+
+      <div class="card room-card">
+        <div class="card-title"><span>Создать комнату</span><span class="tag">хост</span></div>
+        <p class="muted small">Ты получишь код из 5 символов. Друг вводит его у себя — и вы соединяетесь напрямую.</p>
+        <button class="btn primary big" id="btn-host" style="margin-top:12px">Создать комнату</button>
+        <div class="room-code-box hidden" id="room-code-box">
+          <div class="room-code mono" id="room-code">·····</div>
+          <input class="input" id="room-link" readonly>
+          <div class="room-actions">
+            <button class="btn ghost" id="btn-copy-code">📋 Код</button>
+            <button class="btn ghost" id="btn-share-room">🔗 Отправить</button>
+            <button class="btn ghost" id="btn-cancel-room">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card room-card">
+        <div class="card-title"><span>Войти по коду</span><span class="tag">гость</span></div>
+        <input class="input code-input mono" id="join-code" placeholder="КОД" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button class="btn primary big" id="btn-join" style="margin-top:12px">Подключиться</button>
+      </div>
+
+      <p class="muted small online-note">Соединение идёт напрямую между устройствами (WebRTC). Нужен интернет у обоих. Если не соединяется, попробуйте другую сеть или Wi‑Fi.</p>
     </section>
 
     <!-- ПРОФИЛЬ -->
@@ -217,6 +255,7 @@
         <p><b>💥 Залп</b> — за ход ты выпускаешь несколько снарядов сразу: столько, сколько половина твоих живых кораблей. Дополнительного хода за попадание нет.</p>
         <p><b>📅 Вызов дня</b> — одинаковая скрытая доска для всех игроков. Найди все корабли за минимум выстрелов: ≤44 — три звезды, ≤54 — две.</p>
         <p><b>🤝 Дуэль</b> — двое на одном устройстве. Передавайте телефон по очереди, экран блокируется между ходами.</p>
+        <p><b>🌐 Онлайн</b> — один создаёт комнату и отправляет код или ссылку, второй подключается. Играете по классическим правилам, можно слать реакции и просить реванш.</p>
         <h3>Прогресс</h3>
         <p>За партии, миссии и достижения дают опыт. С уровнями растёт звание и открываются новые цветовые стили. Заходи каждый день — бонус за серию растёт.</p>
       </div>
@@ -232,6 +271,8 @@
   <script src="js/ai.js"></script>
   <script src="js/progress.js"></script>
   <script src="js/audio.js"></script>
+  <script src="js/vendor/peerjs.min.js"></script>
+  <script src="js/net.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
