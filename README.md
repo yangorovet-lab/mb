@@ -11,7 +11,7 @@ python3 -m http.server 8080
 # открыть http://localhost:8080/
 ```
 
-Для публикации достаточно выложить содержимое папки на GitHub Pages, Netlify, Vercel или любой хостинг статики.
+Игра автоматически публикуется на GitHub Pages при каждом пуше (см. `.github/workflows/pages.yml`): https://yangorovet-lab.github.io/mb/
 
 ## Что внутри
 
