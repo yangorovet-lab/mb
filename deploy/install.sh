@@ -10,14 +10,27 @@ DOMAIN_ARG="${1:-}"
 
 if [ "$(id -u)" -ne 0 ]; then echo "Запусти от root: sudo bash install.sh <домен>"; exit 1; fi
 
+wait_for_apt() {
+  # на свежем VPS unattended-upgrades держит блокировку несколько минут
+  local waited=0
+  while fuser /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock >/dev/null 2>&1 \
+        || pgrep -x unattended-upgr >/dev/null 2>&1 || pgrep -x apt-get >/dev/null 2>&1 || pgrep -x dpkg >/dev/null 2>&1; do
+    if [ "$waited" -eq 0 ]; then echo "== Ждём, пока система закончит фоновые обновления (apt занят)…"; fi
+    sleep 5; waited=$((waited + 5))
+    if [ "$waited" -ge 900 ]; then echo "apt занят уже 15 минут. Останавливаем unattended-upgrades."; systemctl stop unattended-upgrades 2>/dev/null || true; killall unattended-upgr 2>/dev/null || true; sleep 3; break; fi
+  done
+}
+
 if ! command -v docker >/dev/null 2>&1; then
   echo "== Ставим Docker"
+  wait_for_apt
+  export DEBIAN_FRONTEND=noninteractive
   curl -fsSL https://get.docker.com | sh
 fi
 if ! docker compose version >/dev/null 2>&1; then
   echo "Docker Compose plugin не найден. Установи docker-compose-plugin и запусти снова."; exit 1
 fi
-command -v git >/dev/null 2>&1 || { apt-get update -qq && apt-get install -y -qq git; }
+command -v git >/dev/null 2>&1 || { wait_for_apt; apt-get update -qq && apt-get install -y -qq git; }
 
 if [ -d "$APP_DIR/.git" ]; then
   echo "== Обновляем код в $APP_DIR"
