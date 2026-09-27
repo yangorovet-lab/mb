@@ -317,4 +317,5 @@
     SIZE, FLEET, LETTERS, SHOT, MODES, ABILITIES, DIFFICULTY,
     idx, rc, inBounds, cellName, neighbors4, neighbors8, Board, salvoSize,
   });
-})(window);
+})(typeof window !== "undefined" ? window : globalThis);
+if (typeof module !== "undefined" && module.exports) module.exports = (typeof window !== "undefined" ? window : globalThis).BS;

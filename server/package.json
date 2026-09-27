@@ -1,0 +1,16 @@
+{
+  "name": "battleship-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Сервер «Морского боя»: комнаты, матчмейкинг, таблица лидеров",
+  "main": "index.js",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node --no-warnings=ExperimentalWarning index.js",
+    "dev": "PORT=8081 node --no-warnings=ExperimentalWarning --watch index.js",
+    "test": "node --no-warnings=ExperimentalWarning --test \"test/**/*.test.js\""
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

@@ -1,0 +1,10 @@
+# DOMAIN задаётся в .env. Для домена Caddy сам получит сертификат Let's Encrypt.
+# Без домена можно использовать <IP>.sslip.io — тоже получит сертификат.
+{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy app:8080
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+}

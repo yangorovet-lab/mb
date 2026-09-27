@@ -233,6 +233,12 @@ b { font-weight: 800; }
 .float.emoji { font-size: 54px; text-transform: none; letter-spacing: 0; }
 .own-slot .float.emoji { font-size: 30px; }
 
+.lb { display: flex; flex-direction: column; gap: 4px; }
+.lb-row { display: grid; grid-template-columns: 44px 1fr auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 10px; background: rgba(0, 0, 0, 0.22); font-size: 14px; }
+.lb-row.me { background: rgba(var(--accent-rgb), 0.16); border: 1px solid rgba(var(--accent-rgb), 0.4); }
+.lb-rank { color: var(--muted); font-size: 13px; }
+.lb-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 /* ---------- Режимы ---------- */
 .modes { display: flex; flex-direction: column; gap: 10px; }
 .mode-card {

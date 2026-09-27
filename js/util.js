@@ -100,4 +100,5 @@
   Object.assign(global.BS, {
     $, $$, el, seededRng, hashString, shuffle, pick, sleep, todayKey, formatDateRu, plural, vibrate, isTouch,
   });
-})(window);
+})(typeof window !== "undefined" ? window : globalThis);
+if (typeof module !== "undefined" && module.exports) module.exports = (typeof window !== "undefined" ? window : globalThis).BS;

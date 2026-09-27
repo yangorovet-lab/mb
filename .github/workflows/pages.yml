@@ -22,6 +22,14 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Прописать адрес игрового сервера (переменная репозитория SERVER_URL)
+        env:
+          SERVER_URL: ${{ vars.SERVER_URL }}
+        run: |
+          if [ -n "$SERVER_URL" ]; then
+            printf "window.BS_CONFIG = { server: '%s' };\n" "$SERVER_URL" > js/config.js
+            echo "config.js -> $SERVER_URL"
+          fi
       - name: Настроить Pages (включает сайт, если ещё не включён)
         uses: actions/configure-pages@v5
         with:

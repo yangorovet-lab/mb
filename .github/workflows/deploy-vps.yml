@@ -1,0 +1,34 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: ['claude/epic-lovelace-vua5k7', 'main']
+  workflow_dispatch:
+
+concurrency:
+  group: vps
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+    steps:
+      - name: Проверить, настроены ли секреты
+        id: check
+        run: |
+          if [ -z "$VPS_HOST" ]; then echo "skip=true" >> "$GITHUB_OUTPUT"; echo "VPS_HOST не задан — пропускаем"; else echo "skip=false" >> "$GITHUB_OUTPUT"; fi
+      - name: Обновить сервер по SSH
+        if: steps.check.outputs.skip == 'false'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            set -e
+            BRANCH="${{ github.ref_name }}"
+            curl -fsSL "https://raw.githubusercontent.com/${{ github.repository }}/${BRANCH}/deploy/install.sh" -o /tmp/bs-install.sh
+            sudo BRANCH="$BRANCH" bash /tmp/bs-install.sh "${{ vars.DOMAIN }}"

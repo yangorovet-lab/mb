@@ -1,8 +1,8 @@
 /* Сервис-воркер: кэш оболочки приложения для офлайн-игры */
-const CACHE = 'battleship-v2';
+const CACHE = 'battleship-v3';
 const ASSETS = [
   './', './index.html', './css/style.css',
-  './js/util.js', './js/engine.js', './js/ai.js', './js/progress.js', './js/audio.js', './js/net.js', './js/vendor/peerjs.min.js', './js/app.js',
+  './js/util.js', './js/engine.js', './js/ai.js', './js/progress.js', './js/audio.js', './js/config.js', './js/net.js', './js/app.js',
   './manifest.webmanifest', './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png',
 ];
 
@@ -18,6 +18,7 @@ self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return; // шрифты и прочее — напрямую
+  if (url.pathname.startsWith('/api/') || url.pathname === '/ws' || url.pathname === '/healthz') return;
   e.respondWith(
     caches.match(e.request).then((cached) => {
       const network = fetch(e.request).then((res) => {
