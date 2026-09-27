@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="cyan">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#070b16">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Морской бой">
+  <meta name="description" content="Морской бой в браузере: классика, блиц, арсенал, залп, ежедневный вызов и дуэль на одном экране.">
+  <title>Морской бой</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div id="app">
+
+    <!-- ГЛАВНАЯ -->
+    <section class="screen active" id="screen-home">
+      <header class="home-head">
+        <div class="avatar" id="home-rank-icon">⚓</div>
+        <div class="who">
+          <div class="name-row"><span id="home-name">Капитан</span><button class="icon-btn" id="btn-edit-name" aria-label="Сменить имя">✎</button></div>
+          <div class="rank-row"><span id="home-rank">Юнга</span><span class="dot">·</span><span id="home-level">Уровень 1</span></div>
+          <div class="xpbar"><i id="home-xp-fill"></i></div>
+          <div class="xp-text mono" id="home-xp-text">0 / 150 XP</div>
+        </div>
+        <div class="streak" id="home-streak"><span>🔥</span><b>1</b><small>дн.</small></div>
+      </header>
+
+      <div class="logo">
+        <h1>МОРСКОЙ<span>БОЙ</span></h1>
+        <p class="mono">// digital naval combat</p>
+      </div>
+
+      <button class="card continue hidden" id="home-continue">
+        <div class="cont-icon">▶</div>
+        <div class="cont-text"><b>Продолжить партию</b><small id="home-continue-sub"></small></div>
+      </button>
+
+      <button class="btn primary big" id="btn-play"><span>Играть</span><small>против компьютера</small></button>
+
+      <div class="grid2">
+        <button class="card action" id="btn-daily">
+          <div class="act-icon">📅</div>
+          <b>Вызов дня</b>
+          <small id="daily-sub">Одна доска для всех</small>
+        </button>
+        <button class="card action" id="btn-duel">
+          <div class="act-icon">🤝</div>
+          <b>Дуэль</b>
+          <small>Двое на одном экране</small>
+        </button>
+      </div>
+
+      <div class="card" id="home-missions">
+        <div class="card-title"><span>Миссии дня</span><span class="mono muted" id="missions-timer"></span></div>
+        <ul id="missions-list" class="missions"></ul>
+      </div>
+
+      <button class="btn bonus hidden" id="btn-bonus">🎁 <span>Забрать бонус дня</span><b class="mono" id="bonus-amount">+45 XP</b></button>
+
+      <nav class="home-nav">
+        <button id="btn-profile"><span>🏅</span>Профиль</button>
+        <button id="btn-howto"><span>📖</span>Правила</button>
+        <button id="btn-settings"><span>⚙️</span>Настройки</button>
+      </nav>
+      <p class="version mono muted">v1.0 · работает офлайн</p>
+    </section>
+
+    <!-- ВЫБОР РЕЖИМА -->
+    <section class="screen" id="screen-modes">
+      <header class="top"><button class="icon-btn back" data-back>‹</button><h2>Режим игры</h2><span></span></header>
+      <div class="modes" id="modes-list"></div>
+      <div class="card">
+        <div class="card-title">Противник</div>
+        <div class="seg" id="difficulty-seg"></div>
+        <p class="muted small" id="difficulty-desc"></p>
+      </div>
+      <div class="sticky-bottom">
+        <button class="btn primary big" id="btn-modes-go">Расставить корабли</button>
+      </div>
+    </section>
+
+    <!-- РАССТАНОВКА -->
+    <section class="screen" id="screen-place">
+      <header class="top"><button class="icon-btn back" data-back>‹</button><h2 id="place-title">Расстановка</h2><span></span></header>
+      <p class="hint" id="place-hint">Перетащи корабль на поле или выбери его и нажми на клетку. Нажми на поставленный корабль, чтобы повернуть.</p>
+      <div class="board-wrap">
+        <div class="board own place-board" id="place-board"></div>
+      </div>
+      <div class="tray" id="tray"></div>
+      <div class="place-actions">
+        <button class="btn ghost" id="btn-random">🎲 Случайно</button>
+        <button class="btn ghost" id="btn-rotate">↻ Повернуть</button>
+        <button class="btn ghost" id="btn-clear">✕ Очистить</button>
+      </div>
+      <div class="sticky-bottom">
+        <button class="btn primary big" id="btn-start" disabled>В бой</button>
+      </div>
+    </section>
+
+    <!-- БОЙ -->
+    <section class="screen" id="screen-battle">
+      <header class="top battle-top">
+        <button class="icon-btn back" id="btn-battle-exit">‹</button>
+        <div class="turn-info">
+          <div class="turn-label" id="turn-label">Твой ход</div>
+          <div class="mode-label mono muted" id="battle-mode"></div>
+        </div>
+        <div class="timer hidden" id="timer"><svg viewBox="0 0 36 36"><circle class="tr-bg" cx="18" cy="18" r="16"/><circle class="tr-fg" id="timer-arc" cx="18" cy="18" r="16"/></svg><span id="timer-text" class="mono">7</span></div>
+      </header>
+
+      <div class="fleets">
+        <div class="fleet" id="fleet-enemy"><small>Противник</small><div class="fleet-ships"></div></div>
+        <div class="fleet" id="fleet-own"><small>Твой флот</small><div class="fleet-ships"></div></div>
+      </div>
+
+      <div class="battle-boards" id="battle-boards">
+        <div class="board-slot enemy-slot">
+          <div class="board enemy" id="board-enemy"></div>
+          <div class="float-layer" id="float-enemy"></div>
+        </div>
+        <div class="board-slot own-slot" id="own-slot">
+          <div class="board own" id="board-own"></div>
+          <div class="float-layer" id="float-own"></div>
+          <div class="slot-cap mono">Твоё поле · нажми</div>
+        </div>
+        <div class="battle-bottom">
+          <div class="status-line" id="status-line">Выбери клетку на поле противника</div>
+          <div class="abilities hidden" id="abilities"></div>
+          <div class="fire-row">
+            <div class="combo mono" id="combo"></div>
+            <button class="btn fire" id="btn-fire" disabled>Огонь</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="overlay hidden" id="pass-overlay">
+        <div class="pass-card">
+          <div class="pass-icon">🔒</div>
+          <h3 id="pass-title">Передай устройство</h3>
+          <p id="pass-text">Ходит Игрок 2</p>
+          <button class="btn primary big" id="btn-pass-ok">Готов</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ИТОГИ -->
+    <section class="screen" id="screen-result">
+      <div class="result-hero" id="result-hero">
+        <div class="result-badge" id="result-badge">🏆</div>
+        <h2 id="result-title">Победа!</h2>
+        <p class="muted" id="result-sub"></p>
+      </div>
+      <div class="card">
+        <div class="stats-grid" id="result-stats"></div>
+      </div>
+      <div class="card xp-card">
+        <div class="card-title"><span>Опыт</span><b class="mono accent" id="result-xp">+0 XP</b></div>
+        <div class="xpbar big"><i id="result-xp-fill"></i></div>
+        <div class="xp-text mono" id="result-level-text"></div>
+      </div>
+      <div id="result-events" class="events"></div>
+      <div class="result-actions">
+        <button class="btn primary big" id="btn-again">Ещё раз</button>
+        <button class="btn ghost big" id="btn-share">Поделиться</button>
+        <button class="btn ghost big" id="btn-home">В меню</button>
+      </div>
+    </section>
+
+    <!-- ПРОФИЛЬ -->
+    <section class="screen" id="screen-profile">
+      <header class="top"><button class="icon-btn back" data-back>‹</button><h2>Профиль</h2><span></span></header>
+      <div class="card profile-card">
+        <div class="avatar big" id="profile-rank-icon">⚓</div>
+        <div>
+          <b id="profile-name">Капитан</b>
+          <div class="muted" id="profile-rank"></div>
+          <div class="xpbar"><i id="profile-xp-fill"></i></div>
+          <div class="xp-text mono" id="profile-xp-text"></div>
+        </div>
+      </div>
+      <div class="card"><div class="card-title">Статистика</div><div class="stats-grid" id="profile-stats"></div></div>
+      <div class="card"><div class="card-title"><span>Стиль</span><span class="muted small">открывается с уровнем</span></div><div class="themes" id="themes-list"></div></div>
+      <div class="card"><div class="card-title"><span>Достижения</span><span class="mono muted" id="ach-count"></span></div><div class="achievements" id="achievements-list"></div></div>
+      <div class="card"><div class="card-title">Вызовы дня</div><div class="daily-history" id="daily-history"></div></div>
+    </section>
+
+    <!-- НАСТРОЙКИ -->
+    <section class="screen" id="screen-settings">
+      <header class="top"><button class="icon-btn back" data-back>‹</button><h2>Настройки</h2><span></span></header>
+      <div class="card settings" id="settings-list"></div>
+      <div class="card">
+        <div class="card-title">Данные</div>
+        <button class="btn ghost" id="btn-reset">Сбросить прогресс</button>
+      </div>
+    </section>
+
+    <!-- ПРАВИЛА -->
+    <section class="screen" id="screen-howto">
+      <header class="top"><button class="icon-btn back" data-back>‹</button><h2>Как играть</h2><span></span></header>
+      <div class="card howto">
+        <h3>Основа</h3>
+        <p>Поле 10×10. У каждого 10 кораблей: один 4‑палубный, два 3‑палубных, три 2‑палубных и четыре 1‑палубных. Корабли не могут касаться друг друга, даже углами.</p>
+        <p>Стреляй по полю противника. <b>Попал — стреляй ещё.</b> Промахнулся — ход переходит. Побеждает тот, кто первым потопит весь флот.</p>
+        <h3>Режимы</h3>
+        <p><b>⚡ Блиц</b> — 7 секунд на выстрел. Не успел — ход потерян.</p>
+        <p><b>🎯 Арсенал</b> — три способности: 📡 радар подсвечивает палубы в квадрате 3×3 (не тратит ход), 💣 бомба бьёт по всему квадрату 3×3, 🚀 торпеда летит по строке и поражает первую палубу. Заряды даются за потопленные корабли.</p>
+        <p><b>💥 Залп</b> — за ход ты выпускаешь несколько снарядов сразу: столько, сколько половина твоих живых кораблей. Дополнительного хода за попадание нет.</p>
+        <p><b>📅 Вызов дня</b> — одинаковая скрытая доска для всех игроков. Найди все корабли за минимум выстрелов: ≤44 — три звезды, ≤54 — две.</p>
+        <p><b>🤝 Дуэль</b> — двое на одном устройстве. Передавайте телефон по очереди, экран блокируется между ходами.</p>
+        <h3>Прогресс</h3>
+        <p>За партии, миссии и достижения дают опыт. С уровнями растёт звание и открываются новые цветовые стили. Заходи каждый день — бонус за серию растёт.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+  <div class="modal hidden" id="modal"><div class="modal-card" id="modal-card"></div></div>
+
+  <script src="js/util.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
