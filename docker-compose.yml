@@ -5,6 +5,7 @@ services:
     environment:
       - PORT=8080
       - DATA_DIR=/data
+      - TRUST_PROXY=1
     volumes:
       - app-data:/data
     expose:

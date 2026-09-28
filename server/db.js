@@ -52,6 +52,7 @@ function openDb(file) {
     dailyCount: db.prepare('SELECT COUNT(*) AS n FROM daily WHERE date = ?'),
     insertGame: db.prepare('INSERT INTO games (ts, kind, p1, p2, winner, shots1, shots2, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'),
     stats: db.prepare('SELECT (SELECT COUNT(*) FROM players) AS players, (SELECT COUNT(*) FROM games) AS games, (SELECT COUNT(*) FROM daily) AS daily'),
+    purgeIdle: db.prepare('DELETE FROM players WHERE last_seen < ? AND games = 0 AND pid NOT IN (SELECT pid FROM daily) AND pid NOT IN (SELECT p1 FROM games) AND pid NOT IN (SELECT p2 FROM games)'),
   };
 
   return {
@@ -78,6 +79,7 @@ function openDb(file) {
       return { top, me, total: q.dailyCount.get(date).n };
     },
     stats: () => q.stats.get(),
+    purgeIdlePlayers(days) { return Number(q.purgeIdle.run(Date.now() - days * 86400000).changes || 0); },
   };
 }
 

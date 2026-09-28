@@ -290,6 +290,10 @@ class Room {
 
   react(k, e) {
     if (typeof e !== 'string' || e.length === 0 || e.length > 4) return;
+    const now = Date.now();
+    this.lastReact = this.lastReact || [0, 0];
+    if (now - this.lastReact[k] < 800) return; // не чаще одной реакции в 0,8 с
+    this.lastReact[k] = now;
     this.send(1 - k, { t: 'react', e });
   }
 
