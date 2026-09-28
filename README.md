@@ -54,6 +54,21 @@ curl -fsSL https://raw.githubusercontent.com/yangorovet-lab/mb/claude/epic-lovel
 
 Автодеплой по пушу: workflow `.github/workflows/deploy-vps.yml` заходит на сервер по SSH. Нужны секреты репозитория `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY` (опционально `VPS_PORT`) и переменная `DOMAIN`.
 
+Обновление: повторно запустить ту же команду установки, либо `sudo bash /opt/battleship/deploy/update.sh`, либо настроить автодеплой (секреты выше), тогда обновляет каждый пуш.
+
+Переезд на другой сервер: единственные данные, которые нужно переносить, лежат в SQLite (игроки, таблица дня, история партий). Всё остальное собирается из репозитория, сертификаты Caddy получит заново.
+
+```bash
+# на старом сервере
+sudo bash /opt/battleship/deploy/backup.sh          # напечатает путь к архиву
+scp /root/battleship-backup-*.tar.gz root@НОВЫЙ_IP:/root/
+# на новом сервере
+curl -fsSL https://raw.githubusercontent.com/yangorovet-lab/mb/claude/epic-lovelace-vua5k7/deploy/install.sh | sudo bash -s -- ДОМЕН
+sudo bash /opt/battleship/deploy/restore.sh /root/battleship-backup-*.tar.gz
+```
+
+Если есть домен, после переезда поменяй A-запись на новый IP. Если играли по адресу `IP.sslip.io`, адрес сменится вместе с IP.
+
 Полезное на сервере:
 
 ```bash
