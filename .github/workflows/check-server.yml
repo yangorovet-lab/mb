@@ -1,0 +1,36 @@
+name: Check server
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Адрес игры, например https://185.199.158.124.sslip.io'
+        required: true
+        default: 'https://185.199.158.124.sslip.io'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: healthz, stats, статика, WebSocket
+        env:
+          URL: ${{ github.event.inputs.url }}
+        run: |
+          set -e
+          echo "== $URL"
+          curl -sS --max-time 20 -o /dev/null -w "index: %{http_code} (%{time_total}s)\n" "$URL/"
+          curl -sS --max-time 20 -w "\nhealthz: %{http_code}\n" "$URL/healthz"
+          curl -sS --max-time 20 -w "\nstats: %{http_code}\n" "$URL/api/stats"
+          curl -sS --max-time 20 -o /dev/null -w "app.js: %{http_code}\n" "$URL/js/app.js"
+          curl -sS --max-time 20 -o /dev/null -w "README (должно быть 404): %{http_code}\n" "$URL/README.md"
+          echo "== заголовки"
+          curl -sSI --max-time 20 "$URL/" | grep -iE "^(strict-transport|content-security|x-frame|x-content-type)" || true
+          echo "== websocket"
+          node -e '
+            const url = process.env.URL.replace(/^http/, "ws") + "/ws";
+            const ws = new WebSocket(url);
+            const t = setTimeout(() => { console.log("ws: timeout"); process.exit(1); }, 15000);
+            ws.onopen = () => ws.send(JSON.stringify({ t: "hello", name: "healthcheck" }));
+            ws.onmessage = (e) => { const m = JSON.parse(e.data); if (m.t === "welcome") { console.log("ws: welcome ok, turnMs=" + m.turnMs); clearTimeout(t); ws.close(); process.exit(0); } };
+            ws.onerror = (e) => { console.log("ws: error", e.message || e); process.exit(1); };
+          '
